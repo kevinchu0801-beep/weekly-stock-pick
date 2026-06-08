@@ -2,6 +2,8 @@
 
 Kevin 的三市场（A股/港股/美股）每周精选选股 Codex skill。
 
+Built with Codex.
+
 ## 功能
 
 - 按四因子模型筛选 A股、港股、美股候选池
