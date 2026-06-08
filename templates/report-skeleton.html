@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>三市场每周精选 · {{WEEK_ID}}</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --text: #1f2329;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #2f6fed;
+    --accent-2: #d97706;
+    --red: #d63031;
+    --green: #00b894;
+    --conv: #2f6fed;
+    --entry: #d97706;
+    --trade: #6b7280;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px; line-height: 1.6;
+  }
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+  .banner {
+    background: linear-gradient(135deg, var(--accent), #4f87f8);
+    color: #fff; padding: 28px 32px; border-radius: 12px; margin-bottom: 24px;
+  }
+  .banner h1 { font-size: 26px; margin-bottom: 6px; }
+  .banner .subtitle { opacity: 0.9; font-size: 14px; }
+  .takeaway {
+    background: var(--panel); border-left: 4px solid var(--accent-2);
+    padding: 16px 20px; border-radius: 8px; margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .takeaway b { color: var(--accent-2); }
+  .metric-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;
+  }
+  .metric {
+    background: var(--panel); padding: 16px; border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .metric .label { color: var(--muted); font-size: 12px; }
+  .metric .value { font-size: 22px; font-weight: 600; margin-top: 4px; color: var(--accent); }
+  .market-section { margin-bottom: 32px; }
+  .market-section h2 {
+    font-size: 18px; margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cards-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 14px; margin-bottom: 16px;
+  }
+  .card {
+    background: var(--panel); border-radius: 10px; padding: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border-top: 3px solid var(--trade);
+  }
+  .card.tier-conviction { border-top-color: var(--conv); }
+  .card.tier-entry { border-top-color: var(--entry); }
+  .card.tier-trade { border-top-color: var(--trade); }
+  .card-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .stock-id .code { color: var(--muted); font-size: 12px; }
+  .stock-id .name { font-size: 17px; font-weight: 600; }
+  .score-block { text-align: right; }
+  .score { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .tier { font-size: 12px; color: var(--muted); }
+  .quote-row {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    font-size: 13px; color: var(--muted); margin-bottom: 10px;
+  }
+  .quote-row b { color: var(--text); }
+  .quote-row .red { color: var(--red); }
+  .quote-row .green { color: var(--green); }
+  .seg { margin-bottom: 10px; font-size: 13px; }
+  .seg .lbl {
+    display: inline-block; background: #f0f1f3; color: var(--muted);
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-bottom: 4px;
+  }
+  .seg .lbl.risk { background: #fef2f2; color: var(--red); }
+  .seg p { margin-top: 4px; }
+  .seg ul { margin: 4px 0 0 18px; }
+  .seg li { margin-bottom: 2px; }
+  .conv-block {
+    background: #f8f9fb; padding: 10px 12px; border-radius: 6px;
+    margin-bottom: 10px; font-size: 13px;
+  }
+  .conv-block .row { display: flex; gap: 6px; margin-bottom: 4px; }
+  .conv-block .key { color: var(--muted); flex-shrink: 0; }
+  .conv-block .val { color: var(--text); }
+  .conclusion {
+    border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 8px;
+    font-size: 13px;
+  }
+  .conclusion .if-win {
+    background: #fef3e6; color: var(--accent-2);
+    padding: 1px 6px; border-radius: 3px; font-size: 12px; margin-right: 4px;
+  }
+  .conclusion .if-lose {
+    background: #fef2f2; color: var(--red);
+    padding: 1px 6px; border-radius: 3px; font-size: 12px; margin-right: 4px;
+  }
+  .pool {
+    background: var(--panel); border-radius: 8px; padding: 14px 16px;
+    border: 1px dashed var(--border); margin-top: 10px;
+  }
+  .pool h3 { font-size: 14px; margin-bottom: 10px; color: var(--muted); }
+  .pool-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pool-item {
+    background: #f0f1f3; padding: 4px 10px; border-radius: 4px;
+    font-size: 12px; color: var(--muted);
+  }
+  .footer {
+    text-align: center; color: var(--muted); font-size: 12px;
+    padding: 24px 0; border-top: 1px solid var(--border); margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="banner">
+    <h1>三市场每周精选 · {{WEEK_ID}}</h1>
+    <div class="subtitle">数据截止 {{DATA_DATE}} · 四因子打分模型 · 仅供内部参考</div>
+  </div>
+
+  <div class="takeaway">
+    <b>本周关键判断：</b>{{KEY_TAKEAWAY}}
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric"><div class="label">入选总数</div><div class="value">{{TOTAL_COUNT}}</div></div>
+    <div class="metric"><div class="label">总建议仓位</div><div class="value">{{TOTAL_POSITION}}</div></div>
+    <div class="metric"><div class="label">最强板块</div><div class="value">{{TOP_SECTOR}}</div></div>
+    <div class="metric"><div class="label">现金留存</div><div class="value">{{CASH_RESERVE}}</div></div>
+  </div>
+
+  <!-- A股区块 -->
+  <div class="market-section">
+    <h2>🇨🇳 A股精选</h2>
+    <div class="cards-grid">
+      {{A_CARDS}}
+    </div>
+    <div class="pool">
+      <h3>📋 A股观察池</h3>
+      <div class="pool-list">{{A_POOL}}</div>
+    </div>
+  </div>
+
+  <!-- 港股区块 -->
+  <div class="market-section">
+    <h2>🇭🇰 港股精选</h2>
+    <div class="cards-grid">
+      {{HK_CARDS}}
+    </div>
+    <div class="pool">
+      <h3>📋 港股观察池</h3>
+      <div class="pool-list">{{HK_POOL}}</div>
+    </div>
+  </div>
+
+  <!-- 美股区块 -->
+  <div class="market-section">
+    <h2>🇺🇸 美股精选</h2>
+    <div class="cards-grid">
+      {{US_CARDS}}
+    </div>
+    <div class="pool">
+      <h3>📋 美股观察池</h3>
+      <div class="pool-list">{{US_POOL}}</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    本报告基于 westock-data 行情数据 + 四因子打分模型生成 · 仅供内部参考，不构成投资建议<br>
+    数据截止 {{DATA_DATE}} · 下次更新 {{NEXT_WEEK_ID}}
+  </div>
+</div>
+</body>
+</html>
