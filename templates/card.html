@@ -1,0 +1,42 @@
+<div class="card {{TIER_CLASS}}">
+  <div class="card-head">
+    <div class="stock-id">
+      <div class="code">{{CODE}} · {{SECTOR}}</div>
+      <div class="name">{{NAME}}</div>
+    </div>
+    <div class="score-block">
+      <div class="score">{{SCORE}}</div>
+      <div class="tier">{{TIER}} · {{POSITION}}</div>
+    </div>
+  </div>
+  <div class="quote-row">
+    <span>现价 <b>{{PRICE}}</b></span>
+    <span class="{{CHG_CLASS}}">{{CHG}}</span>
+    <span>市值 <b>{{MCAP}}</b></span>
+    <span>60日 <b class="{{CHG60_CLASS}}">{{CHG60}}</b></span>
+  </div>
+  <div class="seg"><span class="lbl">一句话生意</span>
+    <p>{{ONE_LINER}}</p>
+  </div>
+  <div class="seg"><span class="lbl">核心催化（30-60天）</span>
+    <ul>
+      <li>{{CATALYST_1}}</li>
+      <li>{{CATALYST_2}}</li>
+      <li>{{CATALYST_3}}</li>
+    </ul>
+  </div>
+  <div class="conv-block">
+    <div class="row"><span class="key">市场认为</span><span class="val">{{CONSENSUS}}</span></div>
+    <div class="row"><span class="key">我们认为</span><span class="val">{{NON_CONSENSUS}}</span></div>
+  </div>
+  <div class="seg"><span class="lbl risk">风险点</span>
+    <ul>
+      <li>{{RISK_1}}</li>
+      <li>{{RISK_2}}</li>
+    </ul>
+  </div>
+  <div class="conclusion">
+    <div><strong style="color:var(--accent-2);">{{TIER}}</strong> · 仓位 {{POSITION}} · 时间窗 {{TIMEFRAME}} · 止损 {{STOP_LOSS}}</div>
+    <div><span class="if-win">成功如果</span>{{IF_WIN}}；<span class="if-lose">失败如果</span>{{IF_LOSE}}。</div>
+  </div>
+</div>
