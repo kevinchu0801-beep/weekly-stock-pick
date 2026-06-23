@@ -1,4 +1,4 @@
-<div class="card {{TIER_CLASS}}">
+<div class="card {{TIER_CLASS}}" data-market="{{MARKET}}" data-tier="{{TIER_KEY}}" data-theme="{{THEME}}" data-score="{{SCORE}}" data-position="{{POSITION_NUM}}" data-catalyst="{{FACTOR_CATALYST}}" data-fund="{{FACTOR_FUND}}">
   <div class="card-head">
     <div class="stock-id">
       <div class="code">{{CODE}} · {{SECTOR}}</div>
@@ -9,34 +9,47 @@
       <div class="tier">{{TIER}} · {{POSITION}}</div>
     </div>
   </div>
+  <div class="factor-strip" aria-label="四因子分解">
+    <span>动量 <b>{{FACTOR_MOMENTUM}}</b></span>
+    <span>资金 <b>{{FACTOR_FUND}}</b></span>
+    <span>催化 <b>{{FACTOR_CATALYST}}</b></span>
+    <span>估值 <b>{{FACTOR_VALUATION}}</b></span>
+  </div>
+  <div class="quality-row">
+    <span>数据 {{DATA_QUALITY}}</span>
+    <span>置信 {{CONVICTION}}</span>
+    <span>风险降权 {{RISK_PENALTY}}</span>
+  </div>
   <div class="quote-row">
     <span>现价 <b>{{PRICE}}</b></span>
     <span class="{{CHG_CLASS}}">{{CHG}}</span>
     <span>市值 <b>{{MCAP}}</b></span>
     <span>60日 <b class="{{CHG60_CLASS}}">{{CHG60}}</b></span>
   </div>
-  <div class="seg"><span class="lbl">一句话生意</span>
-    <p>{{ONE_LINER}}</p>
-  </div>
-  <div class="seg"><span class="lbl">核心催化（30-60天）</span>
-    <ul>
-      <li>{{CATALYST_1}}</li>
-      <li>{{CATALYST_2}}</li>
-      <li>{{CATALYST_3}}</li>
-    </ul>
-  </div>
-  <div class="conv-block">
-    <div class="row"><span class="key">市场认为</span><span class="val">{{CONSENSUS}}</span></div>
-    <div class="row"><span class="key">我们认为</span><span class="val">{{NON_CONSENSUS}}</span></div>
-  </div>
-  <div class="seg"><span class="lbl risk">风险点</span>
-    <ul>
-      <li>{{RISK_1}}</li>
-      <li>{{RISK_2}}</li>
-    </ul>
-  </div>
-  <div class="conclusion">
-    <div><strong style="color:var(--accent-2);">{{TIER}}</strong> · 仓位 {{POSITION}} · 时间窗 {{TIMEFRAME}} · 止损 {{STOP_LOSS}}</div>
-    <div><span class="if-win">成功如果</span>{{IF_WIN}}；<span class="if-lose">失败如果</span>{{IF_LOSE}}。</div>
+  <div class="card-body">
+    <div class="seg"><span class="lbl">一句话生意</span>
+      <p>{{ONE_LINER}}</p>
+    </div>
+    <div class="seg"><span class="lbl">核心催化（30-60天）</span>
+      <ul>
+        <li>{{CATALYST_1}}</li>
+        <li>{{CATALYST_2}}</li>
+        <li>{{CATALYST_3}}</li>
+      </ul>
+    </div>
+    <div class="conv-block">
+      <div class="row"><span class="key">市场认为</span><span class="val">{{CONSENSUS}}</span></div>
+      <div class="row"><span class="key">我们认为</span><span class="val">{{NON_CONSENSUS}}</span></div>
+    </div>
+    <div class="seg"><span class="lbl risk">风险点</span>
+      <ul>
+        <li>{{RISK_1}}</li>
+        <li>{{RISK_2}}</li>
+      </ul>
+    </div>
+    <div class="conclusion">
+      <div><strong style="color:var(--accent-2);">{{TIER}}</strong> · 仓位 {{POSITION}} · 时间窗 {{TIMEFRAME}} · 止损 {{STOP_LOSS}}</div>
+      <div><span class="if-win">成功如果</span>{{IF_WIN}}；<span class="if-lose">失败如果</span>{{IF_LOSE}}。</div>
+    </div>
   </div>
 </div>

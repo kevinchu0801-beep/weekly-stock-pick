@@ -46,6 +46,16 @@
   }
   .metric .label { color: var(--muted); font-size: 12px; }
   .metric .value { font-size: 22px; font-weight: 600; margin-top: 4px; color: var(--accent); }
+  .insight-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-bottom: 16px; }
+  .insight-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .insight-panel h2 { font-size: 14px; margin-bottom: 10px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { background: #f0f1f3; border-radius: 4px; color: var(--muted); font-size: 12px; padding: 4px 8px; }
+  .chip b { color: var(--text); }
+  .toolbar { position: sticky; top: 0; z-index: 5; background: rgba(245,246,248,0.94); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 22px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .toolbar label { color: var(--muted); font-size: 12px; display: flex; gap: 6px; align-items: center; }
+  .toolbar select, .toolbar button { height: 32px; border: 1px solid var(--border); background: var(--panel); color: var(--text); border-radius: 6px; padding: 0 10px; font: inherit; }
+  .toolbar button { cursor: pointer; }
   .market-section { margin-bottom: 32px; }
   .market-section h2 {
     font-size: 18px; margin-bottom: 14px; padding-bottom: 8px;
@@ -78,6 +88,11 @@
     display: flex; gap: 14px; flex-wrap: wrap;
     font-size: 13px; color: var(--muted); margin-bottom: 10px;
   }
+  .factor-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
+  .factor-strip span { background: #f8f9fb; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-size: 12px; padding: 5px 6px; }
+  .factor-strip b { color: var(--text); }
+  .quality-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .quality-row span { background: #eef4ff; color: #3158a8; border-radius: 4px; font-size: 11px; padding: 3px 7px; }
   .quote-row b { color: var(--text); }
   .quote-row .red { color: var(--red); }
   .quote-row .green { color: var(--green); }
@@ -109,6 +124,8 @@
     background: #fef2f2; color: var(--red);
     padding: 1px 6px; border-radius: 3px; font-size: 12px; margin-right: 4px;
   }
+  .toggle-card { border: 1px solid var(--border); background: #f8f9fb; color: var(--muted); border-radius: 6px; padding: 2px 8px; font-size: 12px; cursor: pointer; margin-top: 6px; }
+  .card.is-collapsed .card-body { display: none; }
   .pool {
     background: var(--panel); border-radius: 8px; padding: 14px 16px;
     border: 1px dashed var(--border); margin-top: 10px;
@@ -122,6 +139,17 @@
   .footer {
     text-align: center; color: var(--muted); font-size: 12px;
     padding: 24px 0; border-top: 1px solid var(--border); margin-top: 32px;
+  }
+  @media (max-width: 760px) {
+    .container { padding: 16px; }
+    .banner { padding: 22px; border-radius: 8px; }
+    .metric-grid, .insight-grid { grid-template-columns: 1fr 1fr; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .factor-strip { grid-template-columns: repeat(2, 1fr); }
+    .toolbar { position: static; }
+  }
+  @media (max-width: 520px) {
+    .metric-grid, .insight-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -141,6 +169,25 @@
     <div class="metric"><div class="label">总建议仓位</div><div class="value">{{TOTAL_POSITION}}</div></div>
     <div class="metric"><div class="label">最强板块</div><div class="value">{{TOP_SECTOR}}</div></div>
     <div class="metric"><div class="label">现金留存</div><div class="value">{{CASH_RESERVE}}</div></div>
+  </div>
+
+  <div class="insight-grid">
+    <section class="insight-panel">
+      <h2>仓位暴露</h2>
+      <div class="chip-row">{{EXPOSURE_CHIPS}}</div>
+    </section>
+    <section class="insight-panel">
+      <h2>本周变化</h2>
+      <div class="chip-row">{{CHANGE_CHIPS}}</div>
+    </section>
+  </div>
+
+  <div class="toolbar" role="region" aria-label="筛选和排序">
+    <label>市场 <select id="marketFilter"><option value="all">全部</option><option value="a">A股</option><option value="hk">港股</option><option value="us">美股</option></select></label>
+    <label>分类 <select id="tierFilter"><option value="all">全部</option><option value="conviction">确信</option><option value="entry">入场</option><option value="trade">交易</option></select></label>
+    <label>主题 <select id="themeFilter"><option value="all">全部</option>{{THEME_OPTIONS}}</select></label>
+    <label>排序 <select id="sortBy"><option value="score">总分</option><option value="position">仓位</option><option value="catalyst">催化</option><option value="fund">资金</option></select></label>
+    <button type="button" id="toggleAll">折叠全部</button>
   </div>
 
   <!-- A股区块 -->
@@ -184,5 +231,52 @@
     数据截止 {{DATA_DATE}} · 下次更新 {{NEXT_WEEK_ID}}
   </div>
 </div>
+<script>
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const controls = {
+    market: document.getElementById('marketFilter'),
+    tier: document.getElementById('tierFilter'),
+    theme: document.getElementById('themeFilter'),
+    sort: document.getElementById('sortBy'),
+    toggleAll: document.getElementById('toggleAll')
+  };
+  cards.forEach((card) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'toggle-card';
+    button.textContent = '折叠';
+    button.addEventListener('click', () => {
+      card.classList.toggle('is-collapsed');
+      button.textContent = card.classList.contains('is-collapsed') ? '展开' : '折叠';
+    });
+    card.querySelector('.score-block')?.appendChild(button);
+  });
+  function applyView() {
+    const market = controls.market.value;
+    const tier = controls.tier.value;
+    const theme = controls.theme.value;
+    const sortBy = controls.sort.value;
+    document.querySelectorAll('.cards-grid').forEach((grid) => {
+      const visibleCards = Array.from(grid.querySelectorAll('.card')).sort((a, b) => Number(b.dataset[sortBy] || 0) - Number(a.dataset[sortBy] || 0));
+      visibleCards.forEach((card) => grid.appendChild(card));
+    });
+    cards.forEach((card) => {
+      const show = (market === 'all' || card.dataset.market === market) &&
+        (tier === 'all' || card.dataset.tier === tier) &&
+        (theme === 'all' || card.dataset.theme === theme);
+      card.style.display = show ? '' : 'none';
+    });
+  }
+  ['market', 'tier', 'theme', 'sort'].forEach((key) => controls[key].addEventListener('change', applyView));
+  controls.toggleAll.addEventListener('click', () => {
+    const shouldCollapse = controls.toggleAll.textContent === '折叠全部';
+    cards.forEach((card) => {
+      card.classList.toggle('is-collapsed', shouldCollapse);
+      const button = card.querySelector('.toggle-card');
+      if (button) button.textContent = shouldCollapse ? '展开' : '折叠';
+    });
+    controls.toggleAll.textContent = shouldCollapse ? '展开全部' : '折叠全部';
+  });
+</script>
 </body>
 </html>
